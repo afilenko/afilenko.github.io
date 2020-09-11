@@ -9,10 +9,163 @@
 
 <body>
     <div class="page-content">
-        TBD
+        <h1>WebGL: common optimisation techniques</h1>
+        <h2>Intro</h2>
+        <p>
+            There are a lot of different optimization techniques in computer graphics - some of them are pretty common,
+            some are highly dependent on a specific case.
+        </p>
+        <p>
+            The most frequently used optimization techniques in WebGL include the following:
+        </p>
+        <ul>
+            <li>
+                Transfer of calculations from javascript code to shaders.
+            </li>
+            <li>
+                Optimization of rendering of a large number of objects.
+            </li>
+        </ul>
+        <p>
+            Now we would like to demonstrate these optimization techniques using the following animation as an example:
+        </p>
         <video controls>
             <source src="video/final.mp4" type="video/webm">
         </video>
+        <p>
+            Animating objects is one of the common use-cases in computer graphics. For example, when you want to, move
+            some objects or transform their geometry or color, etc.
+        </p>
+        <p>
+            Similar tasks are often solved directly in JavaScript due to the simplicity of implementation. However, this
+            can be a weak point in the entire application performance.
+        </p>
+        <p>
+            Let's take a closer look at the calculations used in our animation example.
+        </p>
+        <p>
+            Getting coordinates as a function of time looks quite simple:
+        </p>
+        <img src="img/part-2/cpu-calc.png" />
+        <p>
+            However, we should keep in mind that all these calculations will be performed for each frame and they depend
+            on the number of animated objects.
+        </p>
+        <p>
+            What does the animation look like before optimization? To demonstrate this, let’s increase objects count to
+            about 2500 objects, each consisting of 4 vertices.
+        </p>
+        <video controls>
+            <source src="video/before-optimisation.mp4" type="video/webm">
+        </video>
+        <h2>Perform calculations on GPU</h2>
+        <p>
+            As you can see, the frame rate is quite low and the animation doesn’t look smooth. In the browser profiler,
+            you can see that the CPU is almost completely loaded (green chart shows frames per second 0-60 and yellow
+            one is the CPU load 0-100%).
+        </p>
+        <p>
+            In order to reduce the CPU load, we will transfer the animation to the graphics processing unit (GPU) using
+            vertex attributes and uniform variables.
+        </p>
+        <img src="img/part-2/gpu-calc.png" />
+        <p>
+            The transformed object coordinates are calculated according to the following data:
+        </p>
+        <ul>
+            <li>
+                <b>explosionDelta</b> - a translation vector used to determine the current position of an object in each
+                moment of time.
+            </li>
+            <li>
+                <b>initialPosition</b> - initial position of the object in the world coordinates.
+            </li>
+            <li>
+                <b>internalRotationMatrix</b> - a matrix used to rotate an object
+            </li>
+        </ul>
+        <p>
+            WebGL uses matrix calculus. This is not that difficult, but may take some time to adapt. Here is an example
+            of creating the rotation matrices that we used above to transform the coordinates of animated objects:
+        </p>
+        <img src="img/part-2/matrix-example.png" />
+        <p>
+            On this video you can see the result of our optimization after transferring calculations to the shaders.
+            Now the animation is much smoother, but the frame rate is still far from 60 FPS.
+        </p>
+        <video controls>
+            <source src="video/gpu-calc.mp4" type="video/webm">
+        </video>
+
+        <h2>Optimize "Lots of Objects" rendering</h2>
+        <p>
+            Handing a large number of objects is a significant impact on performance.
+        </p>
+        <p>
+            Render calls are performed for each object that needs to be drawn and are quite resource intensive.
+            Therefore, it is always advisable to minimize the number of draw calls. This can be achieved through
+            combining similar objects by merging their geometries.
+        </p>
+        <p>
+            This approach slightly changes the way data is conveyed to shaders, for example, in transforming the
+            coordinates of each part of such an aggregate object. In particular, <b>uniform variables</b> are no longer
+            suitable for this purpose since their values ​​are common to all vertices.
+        </p>
+        <p>
+            In this case, we use attributes that enable us to set data on each vertex separately. Let us compare the
+            code that sets the coordinates of objects before and after merging geometries. Passing coordinates to
+            shaders using <b>uniform variables</b>:
+        </p>
+        <img src="img/part-2/set-coords-before-merge-geom.png" />
+        <p>
+            And using <b>attributes</b>:
+        </p>
+        <img src="img/part-2/set-coords-after-merge-geom.png" />
+        <p>
+            The second method looks more cumbersome, but provides more flexibility when conveying geometry data of
+            objects
+        </p>
+        <video controls>
+            <source src="video/after-optimisation.mp4" type="video/webm">
+        </video>
+        <p>
+            The result of the optimization described above can be seen in the video. The result is as follows. As you
+            can see, we managed to achieve 60 FPS and the animation is now smooth enough. This also reduced CPU and GPU
+            load drastically.
+        </p>
+        <h2>Conclusion</h2>
+        <p>
+            Using the approaches outlined in this article, you can use WebGL for a number of applications, including:
+        </p>
+        <ul>
+            <li>
+                Visualizing data, for example, cartographic, statistical or data obtained from various scanners used in
+                medicine, robotics, etc.
+            </li>
+            <li>
+                Implementing complex design solutions.
+            </li>
+            <li>
+                Developing games.
+            </li>
+            <li>
+                Creating graphic editors.
+            </li>
+            <li>
+                Image processing.
+            </li>
+            <li>
+                Developing interactive presentations e.g. of manufacturers of automotive equipment or mobile devices.
+            </li>
+            <li>
+                Implementing virtual/augmented reality projects.
+            </li>
+        </ul>
+        <p>
+            WebGL is a quite versatile tool which mainly requires a graphics processor and imagination.
+            <br />
+            I hope this article helped you a bit on your way to mastering computer graphics!
+        </p>
         <p class='horizontally-centered-content'>
             <a href="index.html" class="page-link">&lt;&lt; Part 1</a>
         </p>

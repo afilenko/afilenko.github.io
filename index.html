@@ -90,13 +90,13 @@
             The "world space" objects typically consist of "polygons" (triangles), as shown in the illustration
             below.
         </p>
-        <img src="img/structure.png">
+        <img src="img/part-1/structure.png">
         <h2>Vertex shader example</h2>
         <p>
             Let’s take a closer look at an example of a vertex shader implementation and discuss data transfer
             methods.
         </p>
-        <img src="img/vert-shader-example.png">
+        <img src="img/part-1/vert-shader-example.png">
         <p>
             There are four ways to pass data to shaders:
         </p>
@@ -152,7 +152,7 @@
         <p>
             Let’s take a look at the simplified illustration of the vertex shader workflow:
         </p>
-        <img src="img/vert-shader-principle.png" />
+        <img src="img/part-1/vert-shader-principle.png" />
         <p>
             After projection params are applied to the vertex world coordinates, the result is passed to the
             <b>gl_Position variable</b>.
@@ -163,11 +163,11 @@
         <p>
             Now let’s take a closer to look at the structure of a fairly simple fragment shader:
         </p>
-        <img src="img/frag-shader-example.png" />
+        <img src="img/part-1/frag-shader-example.png" />
         <p>
             The last line of this fragment shader basically does the following:
         </p>
-        <img src="img/uv-mapping.png" />
+        <img src="img/part-1/uv-mapping.png" />
         <p>
             As we can see from the code, there is a texture uniform and the varying variable var_uv, used for mapping
             the texture coordinates to the object coordinates.
@@ -182,7 +182,7 @@
         <p>
             The operation principle of the pixel shader is shown in the illustration below:
         </p>
-        <img src="img/frag-shader-principle.png" />
+        <img src="img/part-1/frag-shader-principle.png" />
         <p>
             We can see that the data passed from the vertex shader is interpolated during the scan-line filling of the
             polygon.
@@ -204,9 +204,9 @@
             <li>
                 Calculate the color of the current pixel using the same approach – by interpolating a color value
                 between the start and end of the scan-line using the formula:
-                <div>
-                    <b>(endColor - startColor) * (pixelIndex / lineLength)</b>
-                </div>
+                <p class="formula">
+                    (endColor - startColor) * (pixelIndex / lineLength)
+                </p>
             </li>
         </ul>
         <p>
@@ -221,7 +221,7 @@
             And finally, let’s take a look at the render result of applying texture and lighting to a model as described
             above:
         </p>
-        <img src="img/uv-mapping-2.png">
+        <img src="img/part-1/uv-mapping-2.png">
         <p>
             Now, having all that in mind, we can say that to improve rendering performance we need to make as many
             calculations as possible in the Vertex shader and pass the results to the Fragment shader where this data
