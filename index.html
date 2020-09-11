@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+
+<body>
+    <div class="page-content">
+        <h1>WebGL and computer graphics</h1>
+        <p>
+            In today’s modern world of global digitalization, it’s difficult to
+            imagine our life without web technology. We spend a huge amount of time
+            online: working, communicating, shopping, browsing and watching news. For
+            many companies, their web presence has replaced traditional
+            brick-and-mortar buildings as the main interaction point for customers,
+            potential employees and business partners. Given the increased importance
+            of digital channels, it’s no wonder companies are investing more in their
+            brand’s digital touchpoints, seeking to create unique, memorable online
+            experiences.
+        </p>
+        <p>
+            To meet this demand, software developers are broadening their
+            portfolios, incorporating advanced digital tools and technology with
+            impressive results. One interesting trend in this area is the improved
+            support for computer graphics. By incorporating three-dimensional graphics
+            on websites, companies can greatly enhance the user experience. Here are
+            just a few examples of how brands can apply this technology:
+        </p>
+        <ul>
+            <li>
+                Visualizing complex data sets, which can be useful for government
+                agencies and non-profit organizations;
+            </li>
+            <li>
+                Creating virtual showrooms and product displays, which is increasingly
+                important in light of the current pandemic. By applying
+                three-dimensional graphics, companies can enable customers to take a
+                tour of everything from cars to properties, all from the privacy (or
+                safety) of their own homes;
+            </li>
+            <li>
+                Supplementing online education and training, which again, is quite
+                relevant considering many educational institutions are relying on online
+                instruction these days.
+            </li>
+        </ul>
+        <h2>Introducing WebGL</h2>
+        <p>
+            One example of computer graphics technology is WebGL (Web graphics
+            library), a JavaScript API that enables high-performance rendering of 2D
+            and 3D graphics in a browser. For this purpose, no extra plugins are
+            needed; it is enough to have a browser that supports this technology. As
+            browsers are used on a fairly wide range of devices, WebGL will have an
+            increasing impact on the developer community and will become one of the
+            major graphics programming tools in the future.
+        </p>
+        <p>
+            In this article, I want to share with you the basics of computer graphics
+            and some techniques for optimizing it. The code you will see has been
+            written using the ThreeJS library, which provides a convenient abstraction
+            layer over WebGL.
+        </p>
+        <h2>Base structure</h2>
+        <p>
+            WebGl program consists of a couple of functions called shaders, namely, a vertex shader and a pixel shader
+            (also
+            known as a fragment shader).
+        </p>
+        <p>
+            The operation principle of shaders can be illustrated using the following scheme:
+        </p>
+        <ul>
+            <li>
+                Coordinates from "world space" objects are passed to the vertex shader.
+            </li>
+            <li>
+                The vertex shader projects these coordinates onto the screen.
+            </li>
+            <li>
+                The projected pixels are passed to the fragment shader.
+            </li>
+            <li>
+                The fragment shader sets the color of each pixel.
+            </li>
+        </ul>
+        <p>
+            The "world space" objects typically consist of "polygons" (triangles), as shown in the illustration
+            below.
+        </p>
+        <img src="img/structure.png">
+        <h2>Vertex shader example</h2>
+        <p>
+            Let’s take a closer look at an example of a vertex shader implementation and discuss data transfer
+            methods.
+        </p>
+        <img src="img/vert-shader-example.png">
+        <p>
+            There are four ways to pass data to shaders:
+        </p>
+        <ul>
+            <li>
+                Attributes are data that is passed separately for each vertex of the polygon. The most obvious
+                example
+                of such data is vertex coordinates, but it could also be many other types of data, such as color,
+                animation parameters, etc.
+            </li>
+            <li>
+                Uniform variables are global shader variables. Normally, they contain data common to all vertices of
+                an
+                object, for example - light source parameters or textures.
+            </li>
+            <li>
+                Varying variables are used to pass data from a vertex shader to a fragment shader, where this data
+                is
+                interpolated. You can find more details about this process in the Fragment Shader Example section.
+            </li>
+            <li>
+                Textures are arrays of data you can randomly access in your shader program. They typically contain
+                an
+                image that is “pulled” onto the geometry of an object. However, textures can also serve as a source
+                of
+                data used to apply lighting, reflections, animation, etc.
+            </li>
+        </ul>
+        <p>
+            Now, let’s go through some details of the vertex shader sample code:
+        </p>
+        <ul>
+            <li>
+                <b>position</b> contains the coordinates of the polygon vertex.
+            </li>
+            <li>
+                <b>uv</b> are the coordinates used to bind the object vertices to the texture pixels.
+            </li>
+            <li>
+                <b>projectionMatrix</b> is ​​a projection matrix that is used to convert world space coordinates into
+                clip space coordinates within [-1, 1] boundary. For the sake of simplicity, we can assume that
+                the projection is made on the screen.
+            </li>
+            <li>
+                <b>modelViewMatrix</b> is a matrix used to transform coordinates in world space (translation, rotation,
+                scaling, etc.).
+            </li>
+            <li>
+                <b>gl_Position</b> is a WebGL built-in variable which contains the position of the current vertex in
+                the clip cpase.
+            </li>
+        </ul>
+        <p>
+            Let’s take a look at the simplified illustration of the vertex shader workflow:
+        </p>
+        <img src="img/vert-shader-principle.png" />
+        <p>
+            After projection params are applied to the vertex world coordinates, the result is passed to the
+            <b>gl_Position variable</b>.
+        </p>
+        <h2>
+            Fragment shader example
+        </h2>
+        <p>
+            Now let’s take a closer to look at the structure of a fairly simple fragment shader:
+        </p>
+        <img src="img/frag-shader-example.png" />
+        <p>
+            The last line of this fragment shader basically does the following:
+        </p>
+        <img src="img/uv-mapping.png" />
+        <p>
+            As we can see from the code, there is a texture uniform and the varying variable var_uv, used for mapping
+            the texture coordinates to the object coordinates.
+        </p>
+        <p>
+            The value obtained from the texture at the corresponding coordinates will be set to the WebGL built-in
+            variable named gl_FragColor, which is basically a pixel color. </p>
+        <p>
+            Now let’s take a look at the process of painting the object pixel by pixel. Building a mental model of this
+            process provides a better understanding of responsibility distribution between Vertex and Fragment shaders
+            which helps to improve overall performance. </p>
+        <p>
+            The operation principle of the pixel shader is shown in the illustration below:
+        </p>
+        <img src="img/frag-shader-principle.png" />
+        <p>
+            We can see that the data passed from the vertex shader is interpolated during the scan-line filling of the
+            polygon.
+        </p>
+        <p>
+            The data interpolation process for the current pixel can be described as follows:
+        </p>
+        <ul>
+            <li>
+                Calculate clip-space coordinates of the vertex.
+            </li>
+            <li>
+                Pass a color of each vertex of the polygon to the fragment shader.
+            </li>
+            <li>
+                Calculate the color of the pixels at the start and end of the scan-line. This is done by interpolating a
+                corresponding value between vertices a-b and a-c.
+            </li>
+            <li>
+                Calculate the color of the current pixel using the same approach – by interpolating a color value
+                between the start and end of the scan-line using the formula:
+                <div>
+                    <b>(endColor - startColor) * (pixelIndex / lineLength)</b>
+                </div>
+            </li>
+        </ul>
+        <p>
+            where startColor, endColor are colors of the start / end of the line, respectively; pixelIndex is the index
+            of the current pixel in the line and lineLength is the length of the line.
+        </p>
+        <p>
+            The same approach is used to calculate the coordinates of the texture pixel, as well as other data passed
+            from the vertex shader to the fragment shader, such as lighting, for example.
+        </p>
+        <p>
+            And finally, let’s take a look at the render result of applying texture and lighting to a model as described
+            above:
+        </p>
+        <img src="img/uv-mapping-2.png">
+        <p>
+            Now, having all that in mind, we can say that to improve rendering performance we need to make as many
+            calculations as possible in the Vertex shader and pass the results to the Fragment shader where this data
+            can be interpolated quickly, without having to apply the same calculations for each pixel.
+        </p>
+        <h2>Conclusion</h2>
+        <p>
+            WebGL is a flexible and powerful tool for creating computer graphics in a browser and can be applied in
+            various areas:
+        </p>
+        <ul>
+            <li>
+                Visualizing data, e.g. cartographic, statistical or data obtained from scanners used in medicine,
+                robotics, etc.
+            </li>
+            <li>
+                Implementing complex design solutions
+            </li>
+            <li>
+                Game development
+            </li>
+            <li>
+                Online graphic editors
+            </li>
+            <li>
+                Image processing
+            </li>
+            <li>
+                Interactive presentations
+            </li>
+            <li>
+                Implementing virtual/augmented reality projects
+            </li>
+        </ul>
+        <p>
+            I hope you enjoyed reading this article and it will help you to bring our ideas to life.
+        </p>
+        <p class='horizontally-centered-content'>
+            <a href="webgl-intro-part-2.html" class="page-link">Part 2 &gt;&gt;</a>
+        </p>
+    </div>
+</body>
+
+</html>

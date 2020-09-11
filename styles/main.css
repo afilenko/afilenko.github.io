@@ -1,0 +1,37 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  line-height: 1.75;
+  font-size: 18px;
+  color: #1d1d1d;
+}
+
+.page-content {
+  max-width: 800px;
+  margin: 50px auto;
+}
+
+img,
+video {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+}
+
+b {
+  /* TODO: pick right color
+  color: #e414e3; */
+}
+
+.horizontally-centered-content {
+  text-align: center;
+}
+
+.page-link {
+  font-size: 24px;
+}
