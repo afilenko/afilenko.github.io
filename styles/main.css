@@ -13,9 +13,10 @@ body {
 
 .page-content {
   box-sizing: border-box;
-  max-width: 800px;
+  max-width: 840px;
   width: 100%;
   margin: 50px auto;
+  padding: 20px;
 }
 
 img,
@@ -38,6 +39,27 @@ b {
   font-size: 24px;
 }
 
+.example-link {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.example-link img {
+  display: block;
+  width: 250px;
+  height: auto;
+  margin: 0 20px 10px 0;
+}
+
+.example-link:last-child img {
+  margin-right: 0;
+}
+
+.resource-link {
+  display: block;
+  margin-bottom: 10px;
+}
+
 @media screen and (max-width: 800px) {
   body {
     font-size: 16px;
@@ -45,7 +67,6 @@ b {
 
   .page-content {
     margin: 0;
-    padding: 20px;
   }
 }
 
